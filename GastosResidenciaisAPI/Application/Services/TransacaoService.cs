@@ -23,18 +23,14 @@ namespace GastosResidenciaisAPI.Application.Services
         public int Criar(TransacaoCreateDto dto)
         {
             var pessoa = _context.Pessoas.Find(dto.PessoaId);
-            if (pessoa == null)
-                throw new Exception("Pessoa não encontrada.");
+            if (pessoa == null) throw new Exception("Pessoa não encontrada.");
 
             var categoria = _context.Categorias.Find(dto.CategoriaId);
-            if (categoria == null)
-                throw new Exception("Categoria não encontrada.");
+            if (categoria == null) throw new Exception("Categoria não encontrada.");
 
-            // Menores de 18 anos não podem registrar receitas
             if (pessoa.idade < 18 && dto.Tipo == TipoTransacao.Receita)
                 throw new Exception("Pessoa menor de idade não pode registrar Receitas.");
 
-            // Validação da finalidade da categoria
             if (categoria.finalidade != FinalidadeCategoria.Ambas)
             {
                 if (dto.Tipo == TipoTransacao.Despesa && categoria.finalidade == FinalidadeCategoria.Receita)
@@ -42,6 +38,15 @@ namespace GastosResidenciaisAPI.Application.Services
                 if (dto.Tipo == TipoTransacao.Receita && categoria.finalidade == FinalidadeCategoria.Despesa)
                     throw new Exception("Categoria não permite receitas.");
             }
+
+            var existe = _context.Transacoes.Any(t =>
+                t.valor == dto.Valor &&
+                t.data == dto.Data &&
+                t.descricao == dto.Descricao &&
+                t.categoriaId == dto.CategoriaId &&
+                t.pessoaId == dto.PessoaId
+            );
+            if (existe) throw new Exception("Transação já cadastrada.");
 
             var transacao = new Transacao
             {
@@ -58,6 +63,7 @@ namespace GastosResidenciaisAPI.Application.Services
 
             return transacao.id;
         }
+
 
         /// <summary>
         /// Lista todas as transações com nomes de pessoa e categoria

@@ -20,6 +20,10 @@ namespace GastosResidenciaisAPI.Application.Services
         /// </summary>
         public int Criar(PessoaCreateDto dto)
         {
+            var existe = _context.Pessoas
+                .Any(p => p.nome == dto.Nome && p.idade == dto.Idade);
+            if (existe) throw new Exception("Pessoa já cadastrada.");
+
             var pessoa = new Pessoa
             {
                 nome = dto.Nome,
@@ -31,6 +35,7 @@ namespace GastosResidenciaisAPI.Application.Services
 
             return pessoa.id;
         }
+
 
         /// <summary>
         /// Lista todas as pessoas cadastradas

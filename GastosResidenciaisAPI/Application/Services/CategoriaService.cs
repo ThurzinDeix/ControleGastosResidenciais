@@ -20,6 +20,10 @@ namespace GastosResidenciaisAPI.Application.Services
         /// </summary>
         public int Criar(CategoriaCreateDto dto)
         {
+            var existe = _context.Categorias
+                .Any(c => c.descricao == dto.Descricao && c.finalidade == dto.Finalidade);
+            if (existe) throw new Exception("Categoria já cadastrada.");
+
             var categoria = new Categoria
             {
                 descricao = dto.Descricao,
@@ -31,6 +35,7 @@ namespace GastosResidenciaisAPI.Application.Services
 
             return categoria.id;
         }
+
 
         /// <summary>
         /// Lista todas as categorias cadastradas
