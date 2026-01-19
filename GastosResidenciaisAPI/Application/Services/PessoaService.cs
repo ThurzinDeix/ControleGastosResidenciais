@@ -1,6 +1,7 @@
-﻿using GastosResidenciaisAPI.Domain.DTOs.PessoaDTOs;
-using GastosResidenciaisAPI.Domain.Model.PessoaAggregate;
-using GastosResidenciaisAPI.Infraestrutura;
+﻿using GastosResidenciaisAPI.API.DTOs.PessoaDTOs;
+using GastosResidenciaisAPI.Application.Interfaces;
+using GastosResidenciaisAPI.Domain.Entities;
+using GastosResidenciaisAPI.Infraestrutura.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace GastosResidenciaisAPI.Application.Services
@@ -14,6 +15,9 @@ namespace GastosResidenciaisAPI.Application.Services
             _context = context;
         }
 
+        /// <summary>
+        /// Cria uma nova pessoa
+        /// </summary>
         public int Criar(PessoaCreateDto dto)
         {
             var pessoa = new Pessoa
@@ -28,6 +32,9 @@ namespace GastosResidenciaisAPI.Application.Services
             return pessoa.id;
         }
 
+        /// <summary>
+        /// Lista todas as pessoas cadastradas
+        /// </summary>
         public IEnumerable<PessoaResponseDto> Listar()
         {
             return _context.Pessoas.Select(p => new PessoaResponseDto
@@ -38,8 +45,13 @@ namespace GastosResidenciaisAPI.Application.Services
             }).ToList();
         }
 
+        /// <summary>
+        /// Deleta uma pessoa pelo ID
+        /// Atenção: todas as transações relacionadas também serão removidas
+        /// </summary>
         public void Deletar(int id)
         {
+            // Inclui transações para garantir que sejam removidas junto da pessoa
             var pessoa = _context.Pessoas
                 .Include(p => p.transacoes)
                 .FirstOrDefault(p => p.id == id);
@@ -50,8 +62,5 @@ namespace GastosResidenciaisAPI.Application.Services
             _context.Pessoas.Remove(pessoa);
             _context.SaveChanges();
         }
-
-
-
     }
 }
