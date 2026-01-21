@@ -1,7 +1,7 @@
 # Sistema de Controle de Gastos Residenciais
 
 ## Objetivo
-Implementar um sistema para controle de gastos residenciais, separado em Web API e Front-end, seguindo as regras de negócio definidas no teste técnico.
+Implementar um sistema para controle de gastos residenciais, separado em Web API e Front-end, como objeto de estudo pessoal.
 
 ## Estrutura do Projeto
 
